@@ -1,0 +1,30 @@
+Using CSP with WordPress by Walter Ebert @ https://walterebert.com/blog/using-csp-wordpress/
+
+With a Content Security Policy (CSP) you can prevent Cross-Site Scripting attacks. It is supported by most browsers. It can help to provide extra protection for your visitors by defining what your browser is allowed to load.
+
+For a WordPress site you can use it be adding CSP rules to the .htaccess file. To work your web server must have the headers module active.
+
+<IfModule mod_headers.c>
+    Header set Content-Security-Policy "default-src 'self'; img-src 'self' http: https: *.gravatar.com;"
+</IfModule>
+
+This will allow anything to be loaded from the web site plus portrait images from Gravatar (over http & https). Anything else will be blocked by your browser.
+
+Of course certain plugins could break, because they rely on loading javascript, images or data from other domains. If you, for example, want to use Google Analytics, you will need to allow the appropriate domain(s): scrip-src 'self' 'unsafe-inline' http: https: *.google-analytics.com;.
+
+You can see any violations of these rules in the console of the developer tools of your browser.
+Screenshot of browser console
+
+If you use CSP on your site, this will break the WordPress backend. To fix it add a wp-admin/.htaccess file with the following rules:
+
+<IfModule mod_headers.c>
+    Header set Content-Security-Policy "default-src 'self'; img-src 'self' data: http: https: *.gravatar.com; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' http: https: fonts.googleapis.com; font-src 'self' data: http: https: fonts.googleapis.com themes.googleusercontent.com;"
+</IfModule>
+
+[update] As an alternative you can disable CSP in wp-admin/.htaccess:
+
+<IfModule mod_headers.c>
+    Header unset Content-Security-Policy
+</IfModule>
+
+Unless you really know your web site inside and out, I would caution you to use CSP together with WordPress at the moment.
